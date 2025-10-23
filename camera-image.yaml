@@ -1,0 +1,26 @@
+
+
+# retrieve URL with camera picture
+text_sensor:
+  - platform: homeassistant
+    id: doorbell_camera_access_url
+    entity_id: camera.camera_proxy_camera_g4_doorbell_pro_high_resolution_channel
+    attribute: entity_picture
+    on_value:
+      - component.update: doorbell_camera_url
+  - platform: template
+    id: doorbell_camera_url
+    lambda: |-
+      std::string url = "https://homeassistant.martijnotto.nl" + id(doorbell_camera_access_url).state;
+      return url;
+    on_value:
+      - lambda: 'id(camera_image).set_url(x);'
+      - component.update: camera_image
+
+online_image:
+  - url: 'https://images.dog.ceo/breeds/mexicanhairless/n02113978_3727.jpg'
+    type: RGB565
+    format: jpg
+    id: camera_image
+    buffer_size: 4096
+
